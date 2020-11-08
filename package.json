@@ -1,0 +1,30 @@
+{
+  "name": "poke-combat",
+  "version": "1.0.0",
+  "description": "interview task",
+  "main": "index.html",
+  "scripts": {
+    "watch": "webpack --watch",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/underyourskin/poke-combat.git"
+  },
+  "author": "Daniel Cohen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/underyourskin/poke-combat/issues"
+  },
+  "homepage": "https://github.com/underyourskin/poke-combat#readme",
+  "dependencies": {
+    "pixi.js": "^5.3.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "babel-loader": "^8.1.0",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^4.2.0"
+  }
+}
