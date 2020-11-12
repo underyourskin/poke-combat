@@ -5,21 +5,14 @@ export default class SelectedCharacter {
   constructor(stage, loader) {
     this.stage = stage;
     this.loader = loader;
-
-    this.boxHeight = 470;
+    this.boxHeight = 500;
     this.boxWidth = 380;
   }
 
-  boxCalculateX() {
-
-  }
-
   createCharacterBox(typeColor) {
-
-    this.prevBox = this.selectedBok;
+    this.prevBox = this.selectedBox;
 
     // Character box  
-
     const graphics = new PIXI.Graphics();
 
     graphics.lineStyle(1, 0x000000, 1) // border
@@ -28,10 +21,8 @@ export default class SelectedCharacter {
       .endFill();
 
     graphics.pivot.x = 0.5;
-    // graphics.pivot.t = 0.5;
 
     this.selectedBox = graphics;
-
   }
 
   createBoxHeader(name) {
@@ -49,33 +40,67 @@ export default class SelectedCharacter {
     this.pokeName.anchor.x = 0.5;
   }
 
-  createCharacterStats(pokeData) {
-    // Ability: lightning-rod
-    // Move 1: Mega Punch
-    // Move 2: Pay Day
-    // Move 3: Thunder Punch
-    // Move 4: Slam
-    // Speed: 90
-    // Special Defense: 50
-    // Special Attack: 50
-    // Defense: 40
-    // Attack: 55
-    // HP: 35
-    const firstAbility = pokeData.abilities.find(ability => !ability.is_hidden).ability.name;
-    console.log(firstAbility);
+  textCreator(statName, statText, yPos) {
+
+    const text = `${statName}: ${statText}`;
 
     const style = new PIXI.TextStyle({
       fill: "#312b2b",
       fontFamily: "Courier New",
       fontSize: 18,
-      fontStyle: "italic"
+      fontStyle: "italic",
     });
-    this.abilityText = new PIXI.Text(`Ability: ${firstAbility}`, style);
-    this.abilityText.x = 500;
-    this.abilityText.y = 585;
-    this.abilityText.anchor.x;
-    
 
+    const textObj = new PIXI.Text(text, style);
+    textObj.x = 500 - (this.boxWidth / 2) + 10;
+    textObj.y = yPos;
+
+    return textObj;
+  }
+
+  capitalize(string) {
+    if (typeof string !== 'string') return ''
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
+  createCharacterStats(pokeData) {
+
+    const yStartPos = 570;
+
+    let yPos = yStartPos;
+
+    // Ability
+    this.prevAbilityText = this.abilityText;
+
+    const firstAbility = pokeData.abilities.find(ability => !ability.is_hidden).ability.name;
+    this.abilityText = this.textCreator('Ability', firstAbility, yPos)
+    yPos += 20;
+
+    // Moves
+    this.prevMovesText = this.movesText;
+
+    const moves = pokeData.moves.slice(0, 4).reduce((acc, item) => {
+      acc.push(item.move.name);
+      return acc;
+    }, [])
+
+    const movesLine1 = moves.slice(0, 2).join(', '),
+      movesLine2 = moves.slice(2).join(', ');
+
+    this.movesText = this.textCreator('Moves', `${movesLine1},\n       ${movesLine2}`, yPos);
+
+    yPos += 40; // increment by 20,  2 times as Moves takes 2 lines
+
+    // Stats
+    this.prevStats = this.stats ? [...this.stats] : [];
+    this.stats = []; // initialize stats array
+    pokeData.stats.map(item => {
+      const statName = item.stat.name,
+        statValue = item.base_stat;
+      const statText = this.textCreator(this.capitalize(statName), statValue, yPos);
+      this.stats.push(statText);
+      yPos += 20;
+    })
   }
 
   createCharacterImage(pokeData) {
@@ -98,16 +123,16 @@ export default class SelectedCharacter {
   select(pokeData) {
     this.prev = this.selected;
 
-    if(pokeData.data){
+    if (pokeData.data) {
       pokeData = pokeData.data;
     }
-    if(this.prev && pokeData.name == this.prev.name){
+    if (this.prev && pokeData.name == this.prev.name) {
       return;
     }
-    
+
     this.selected = pokeData;
     console.log(pokeData);
-  
+
 
     this.createCharacterBox(pokeTypes[pokeData.types[0].type.name])
     this.createBoxHeader(pokeData.name);
@@ -124,6 +149,11 @@ export default class SelectedCharacter {
     this.stage.addChild(this.selectedBox);
     this.stage.addChild(this.pokeName);
     this.stage.addChild(this.selectedImage);
+    this.stage.addChild(this.abilityText);
+    this.stage.addChild(this.movesText);
+    this.stats.map(stat => {
+      this.stage.addChild(stat);
+    })
   }
 
   delete() {
@@ -133,6 +163,12 @@ export default class SelectedCharacter {
     this.stage.removeChild(this.prevBox);
     this.stage.removeChild(this.prevName);
     this.stage.removeChild(this.prevImage);
+    this.stage.removeChild(this.prevAbilityText);
+    this.stage.removeChild(this.prevMovesText);
+    this.prevStats.map(stat => {
+      console.log(stat);
+      this.stage.removeChild(stat);
+    })
 
   }
 }
