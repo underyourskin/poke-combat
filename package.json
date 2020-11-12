@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/underyourskin/poke-combat#readme",
   "dependencies": {
+    "pixi-filters": "^3.1.1",
     "pixi.js": "^5.3.3"
   },
   "devDependencies": {

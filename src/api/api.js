@@ -8,9 +8,11 @@ export default class Api {
       await Promise.all( collection.map( async ( item ) => {
         const itemResult = await ( await fetch( item.url ) ).json();
 
-        result.push( itemResult );
-      } ) );
+        
+         result.push( itemResult );
+      } ) ); 
 
-      return result;
+      return result.sort( ( a, b ) => a.id - b.id);
+
   }
 }
