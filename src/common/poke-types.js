@@ -1,0 +1,20 @@
+export const pokeTypes = {
+  grass: 0x78c850,
+  bug: 0xa8b820,
+  dark: 0x705848,
+  dragon: 0x7038f8,
+  electric: 0xf8d030,
+  fairy: 0xee99ac,
+  fighting: 0xc03028,
+  fire: 0xf08030,
+  flying: 0xa890f0,
+  ghost: 0x705898,
+  ground: 0xe0c068,
+  ice: 0x98d8d8,
+  normal: 0xa8a878,
+  poison: 0xa040a0,
+  psychic: 0xf85888,
+  rock: 0xb8a038,
+  steel: 0xb8b8d0,
+  water: 0x6890f0
+}
