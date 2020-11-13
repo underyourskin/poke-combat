@@ -1,59 +1,44 @@
-import * as PIXI from 'pixi.js';
 import BattleButton from '../components/battle-button';
 import CharacterList from '../components/character-list';
 import SelectedCharacter from '../components/selected-character';
+import Countdown from '../components/agnostic/countdown';
 
 const INITIAL_POKEMON = 0;
 
 export default class SelectCharacterScreen {
 
-  constructor(stage, pokemons, renderer) {
-    this.renderer = renderer
-    this.stage = stage;
+  constructor(app, pokemons) {
+    this.renderer = app.renderer;
+    this.stage = app.stage;
     this.pokemons = pokemons;
 
     this.initialize();
   }
 
-  battleCountdown(count, timeout, x = 500, y = 500) {
-    return new Promise(async (resolve) => {
-      const style = new PIXI.TextStyle({
-        fill: "black",
-        fontFamily: "\"Comic Sans MS\", cursive, sans-serif",
-        fontSize: 80,
-        fontStyle: "italic",
-      });
-
-      const textObj = new PIXI.Text(count, style);
-
-      textObj.x = x;
-      textObj.y = y;
-
-      this.stage.addChild(textObj);
-
-      setTimeout(() => {
-        this.stage.removeChild(textObj);
-
-        resolve();
-      }, timeout)
-    });
-  }
-
-  async startBattle() {
-    for (let i = 1; i < 4; i++) {
-      await this.battleCountdown(i, 1000);
-    }
+  startBattle() {
+    this.countdown.render()
   }
 
   async initialize() {
-    const selectedCharacter = new SelectedCharacter(this.stage);
-    const characterList = new CharacterList(this.stage, this.pokemons, selectedCharacter);
-    const battleButton = new BattleButton(this.stage, this.startBattle.bind(this), this.renderer);
+    this.selectedCharacter = new SelectedCharacter(this.stage);
+    this.characterList = new CharacterList(this.stage, this.pokemons, this.selectedCharacter);
+    this.battleButton = new BattleButton(this.stage, this.startBattle.bind(this), this.renderer); // props.onClick = this.startBattle.
+    
+    this.countdown = new Countdown({
+      start: 5,
+      end: 1,
+      timeout: 1500,
+      x: 500,
+      y: 500,
+      stage: this.stage
+    })
 
-    selectedCharacter.select(this.pokemons[INITIAL_POKEMON]);
-
-    characterList.render();
-    selectedCharacter.render();
+    this.selectedCharacter.select(this.pokemons[INITIAL_POKEMON]);
   }
 
+  render() {
+    this.characterList.render();
+    this.selectedCharacter.render();
+    this.battleButton.render();
+  }
 }
