@@ -2,21 +2,28 @@ import BattleButton from '../components/battle-button';
 import CharacterList from '../components/character-list';
 import SelectedCharacter from '../components/selected-character';
 import Countdown from '../components/agnostic/countdown';
+import ScreenBase from '../core/base/screen-base';
+import ScreenManager from '../core/screen-manager';
 
 const INITIAL_POKEMON = 0;
 
-export default class SelectCharacterScreen {
+export default class SelectCharacterScreen extends ScreenBase {
 
   constructor(app, pokemons) {
-    this.renderer = app.renderer;
-    this.stage = app.stage;
+    super( app );
+ 
     this.pokemons = pokemons;
 
     this.initialize();
   }
 
-  startBattle() {
-    this.countdown.render()
+  getId() {
+    return 'select-character-screen';
+  }
+
+  async startBattle() {
+    await this.countdown.render();
+    ScreenManager.getInstance().navigateTo( 'battle-screen');
   }
 
   async initialize() {

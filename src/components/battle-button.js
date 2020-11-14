@@ -13,7 +13,6 @@ export default class BattleButton {
 
 
   init() {
-
     this.graphics = new PIXI.Graphics();
     this.graphics.lineStyle(1, 0xa12727, 1);
     this.graphics.beginFill(0xff4a4a, 0.25);
@@ -21,6 +20,7 @@ export default class BattleButton {
     this.graphics.endFill();
 
     const texture = this.renderer.generateTexture(this.graphics);
+
     this.sprite = new PIXI.Sprite(texture);
     this.sprite.interactive = true;
     this.sprite.x = 420;
@@ -28,8 +28,6 @@ export default class BattleButton {
     this.sprite.buttonMode = true;
     this.sprite.defaultCursor = 'crosshair';
     this.sprite.on('mousedown', () => this.handleClick())
-
-
 
     const style = new PIXI.TextStyle({
       "fill": "black",
