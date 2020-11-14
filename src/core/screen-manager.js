@@ -3,9 +3,9 @@ import ScreenBase from "./base/screen-base";
 export default class ScreenManager {
   static instance = null;
 
-  constructor( app ) {
-    if( ScreenManager.instance ) {
-      throw new Error( 'ScreenManager is singleton');
+  constructor(app) {
+    if (ScreenManager.instance) {
+      throw new Error('ScreenManager is singleton');
     }
 
     this.app = app;
@@ -20,28 +20,40 @@ export default class ScreenManager {
     return this.instance;
   }
 
-  addScreen( screen ) {
+  addScreen(screen) {
     // Register new screen.
-    this.screens[ screen.getId() ] = screen;
+    this.screens[screen.getId()] = screen;
   }
 
-  navigateTo( screenId, force = false ) {
-    if( !force && this.currentScreen ) {
-      this.canvas.classList.remove( this.currentScreen.getLoadingAnimationClass() );
-      this.canvas.classList.add( this.currentScreen.getDestroyingAnimationClass() );
+  navigateTo(screenId, args = { force: false } ) {
+    const { classList } = this.canvas;
+    const screen = this.screens[screenId];
 
-      return setTimeout( () => {
-        this.navigateTo( screenId, true );
-      }, 2000 );
+    if (this.currentScreen) {
+      this.prevScreen = this.currentScreen;
+
+      if (!args.force) {
+
+        classList.remove(this.prevScreen.getLoadingAnimationClass());
+        classList.add(this.prevScreen.getDestroyingAnimationClass());
+        screen.onScreenChange( args );
+        return setTimeout(() => {
+          this.prevScreen.destroy();
+
+          classList.remove(this.prevScreen.getDestroyingAnimationClass());
+
+          args.force = true;
+
+          
+          this.navigateTo(screenId, args );
+        }, 2000);
+      }
     }
-    
-    const screen = this.screens[ screenId ];
 
     this.currentScreen = screen;
-    
-    this.canvas.classList.add( screen.getLoadingAnimationClass() );
-    
-    screen.destroy();
+
+    classList.add(screen.getLoadingAnimationClass());
+
     screen.render();
   }
 }

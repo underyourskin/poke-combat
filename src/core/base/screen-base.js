@@ -20,6 +20,8 @@ export default class ScreenBase {
     throw new Error( 'render() is required.' );
   }
 
+  async onScreenChange( args = {} ) {};
+
   destroy() {
     this.stage.removeChildren();
   }

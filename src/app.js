@@ -14,9 +14,7 @@ class App {
       width: 1000,
       height: 1000,
     });
-
-    app.renderer.backgroundColor = 0xAAAAAA // 0x4a2f30; 
-
+    
     document.body.appendChild(app.view);
 
     const screenManager = new ScreenManager(app);

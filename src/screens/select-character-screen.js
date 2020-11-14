@@ -22,19 +22,27 @@ export default class SelectCharacterScreen extends ScreenBase {
   }
 
   async startBattle() {
+
     await this.countdown.render();
-    ScreenManager.getInstance().navigateTo( 'battle-screen');
+    const random = Math.floor(Math.random() *  Math.floor(this.pokemons.length - 1));
+ 
+
+    const args = {
+      playerA: this.selectedCharacter.selected,
+      playerB: this.pokemons[random],
+    }
+    ScreenManager.getInstance().navigateTo( 'battle-screen', args );
   }
 
-  async initialize() {
+  initialize() {
     this.selectedCharacter = new SelectedCharacter(this.stage);
     this.characterList = new CharacterList(this.stage, this.pokemons, this.selectedCharacter);
     this.battleButton = new BattleButton(this.stage, this.startBattle.bind(this), this.renderer); // props.onClick = this.startBattle.
     
     this.countdown = new Countdown({
-      start: 5,
+      start: 3,
       end: 1,
-      timeout: 1500,
+      timeout: 1000,
       x: 500,
       y: 500,
       stage: this.stage
@@ -44,6 +52,7 @@ export default class SelectCharacterScreen extends ScreenBase {
   }
 
   render() {
+    this.renderer.backgroundColor = 0xAAAAAA;
     this.characterList.render();
     this.selectedCharacter.render();
     this.battleButton.render();
