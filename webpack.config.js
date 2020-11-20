@@ -1,6 +1,3 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-
-
 module.exports = {
   entry: './src/index.js',
   mode: 'development',
@@ -14,10 +11,10 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
+          loader: "babel-loader",
+          
         }
       },
     ]
   },
-  plugins: [new HtmlWebpackPlugin()],
 };
