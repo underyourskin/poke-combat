@@ -1,8 +1,6 @@
 import * as PIXI from 'pixi.js'
-import Api from './api/api';
 import ScreenManager from './core/screen-manager';
-import BattleScreen from './screens/battle-screen';
-import SelectCharacterScreen from './screens/select-character-screen.js';
+
 
 class App extends PIXI.Application{
   constructor() {
