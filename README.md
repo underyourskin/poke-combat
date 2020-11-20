@@ -1,5 +1,11 @@
-# poke-combat
-Interview task with PIXI.js
+# Poke Combat
+Interview task with PIXI.js and gsap
+
+## Project installation 
+
+- npm install
+- npm run build
+- npm run start
 
 ## Commit format:
 
