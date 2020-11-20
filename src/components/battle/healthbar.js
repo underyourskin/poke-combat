@@ -9,6 +9,7 @@ export default class HealthBar extends PIXI.Container {
 
     this.healthBackground = new PIXI.Graphics();
     this.health = new PIXI.Graphics();
+    this.healthBorder = new PIXI.Graphics();
     this.plaster = new PIXI.Graphics();
 
     this.init();
@@ -28,6 +29,10 @@ export default class HealthBar extends PIXI.Container {
     this.health.drawRect(450, this.isSelected ? this.yPos + 250 : this.yPos - 10, width, 15);
     this.health.endFill();
 
+    this.healthBorder.lineStyle(1, 0x000000, 1, 1, true);
+    this.healthBorder.drawRect(450, this.isSelected ? this.yPos + 250 : this.yPos - 10, width, 15);
+    this.healthBorder.endFill();
+
     // health plaster 
     this.plaster.lineStyle(1, 0xAAAAAA, 1, 1, true); // needs to be same as background. 
     this.plaster.beginFill(0xAAAAAA);
@@ -37,6 +42,7 @@ export default class HealthBar extends PIXI.Container {
     // stage
     this.addChild(this.healthBackground);
     this.addChild(this.health);
+    this.addChild(this.healthBorder);
     this.addChild(this.plaster);
   }
 }
