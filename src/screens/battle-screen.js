@@ -1,88 +1,56 @@
 import * as PIXI from 'pixi.js';
+import Player from '../components/battle/player';
 import ScreenBase from "../core/base/screen-base";
+import Animations from '../animations/animations'
+import AnimationManager from '../animations/animation-manager';
+import BattleManager from '../core/battle-manager';
 
 export default class BattleScreen extends ScreenBase {
-  constructor( app ) {
-    super( app );
+  constructor(props) {
+    super();
 
-    this.sprites = [];
-  }
+    const { playerA, playerB, handleSwitch } = props;
 
-  getId() {
-    return 'battle-screen';  
-  }
-
-  async onScreenChange( args = {} ) {
-
-    this.playerA = args.playerA;
-    this.playerB = args.playerB;
-    
-    const selectedPlayerSprite = new PIXI.Sprite.from(this.playerA.sprites.back_default);
-
-    selectedPlayerSprite.x = 500;
-    selectedPlayerSprite.anchor.x = 0.5
-    selectedPlayerSprite.y = 750;
-    selectedPlayerSprite.anchor.y = 0.5;
-    selectedPlayerSprite.width = 250;
-    selectedPlayerSprite.height = 250;
-
-    this.sprites.push(selectedPlayerSprite);
-
-    const opponentSprite = new PIXI.Sprite.from(this.playerB.sprites.front_default);
-
-    opponentSprite.x = 500;
-    opponentSprite.anchor.x = 0.5
-    opponentSprite.y = 150;
-    opponentSprite.anchor.y = 0.5;
-    opponentSprite.width = 250;
-    opponentSprite.height = 250;
-
-    this.sprites.push(opponentSprite);
-  }
-
-  // first attacker - compare speeds
-  // damage  = (Attack / Opponent Defense) * 0 - 200
-  // attack animation ::
-  //  - The pokemon moves to the oponent.
-  //  - The opponent should blink 3 times
-  //  - The opponent HP bar should decrease
-  //  - The pokemon that attacked, should return to it's initial position
-  // If you loose or win, show a text 'You Lose' or 'You Win' respectively, and a Play Again button which should repeat the steps from step 1. This button shouldn't refresh the page, but redraw the stage.
-  battleManager() {
-    const statsA = this.playerA.stats;
-    const statsB = this.playerB.stats;
-
-    const aSpeed = this.findStat('speed', statsA);
-    const bSpeed = this.findStat('speed', statsB);
-
-    
-    let isAttackerA;
-    if( aSpeed < bSpeed ) {
-       isAttackerA = false;
-      console.log(' B starts');
-
-    } else if ( aSpeed >  bSpeed) {
-      isAttackerA = true;
-      console.log( 'a starts');
-    
-    } else {
-      isAttackerA = Math.random() < 0.5 ? true : false;
+    this.handleSwitch = handleSwitch;
+    this.players = {
+      playerA,
+      playerB
     }
+    this.sprites = [];
 
-  }
-  
-  findStat( name, stats) {
-    const stat = stats.find(item => item.stat.name == name);
-    return stat.base_stat;
+    this.init()
   }
 
-  calculateDamage( playerA, playerB ) {
+  getId() { return 'battle-screen'; }
 
-  }
+  async init() {
 
-  render() {
-    this.renderer.backgroundColor = 0x000300;
-    this.sprites.forEach(item => this.stage.addChild(item));
-    this.battleManager();
+    const playerA = new Player({
+      xPos: 500,
+      yPos: 580,
+      pokemon: this.players.playerA,
+      isSelected: true,
+    });
+
+    const playerB = new Player({
+      xPos: 500,
+      yPos: 35,
+      pokemon: this.players.playerB,
+      isSelected: false,
+    });
+
+    this.addChild(playerA);
+    this.addChild(playerB);
+
+    this.playerA = playerA;
+    this.playerB = playerB;
+    
+    const battleManager = new BattleManager(this.playerA, this.playerB, this.players)
+    
+   setTimeout(async ()=> {
+     await battleManager.start(this.handleSwitch.bind(this));
+     
+   }, 3000); 
+   
   }
 }

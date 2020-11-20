@@ -1,21 +1,17 @@
 import * as PIXI from 'pixi.js'
-import { pokeTypes } from '../data/poke-types';
+import { pokeTypes } from '../../data/poke-types';
 
 const BOX_WIDTH = 380;
 const BOX_HEIGHT = 500;
-export default class SelectedCharacter {
-  constructor(stage) {
 
-    this.stage = stage;
-    
-    this.loadBattleButton();
+export default class SelectedCharacter extends PIXI.Container {
+  constructor() {
+    super();
   }
-
   
   // the component box everything else should be draw on top of that
   createCharacterBox(typeColor) {
-    this.prevBox = this.selectedBox;
-
+    
     // Character box  
     const graphics = new PIXI.Graphics();
 
@@ -31,8 +27,6 @@ export default class SelectedCharacter {
 
   // presents the character name
   createBoxHeader(name) {
-    // poke name
-    this.prevName = this.pokeName;
 
     const style = new PIXI.TextStyle({
       fill: "#000000",
@@ -46,14 +40,6 @@ export default class SelectedCharacter {
   }
 
 
-  loadBattleButton() {
-    // let texture = PIXI.Texture.from('../assets/battle-button.png');
-    // this.buttonSprite = new PIXI.Sprite(texture);
-    // this.buttonSprite.y = 850;
-    // this.buttonSprite.x = 500;
-    
-  }
-
   // presents character's stats
   createCharacterStats(pokeData) {
 
@@ -62,19 +48,19 @@ export default class SelectedCharacter {
     let yPos = yStartPos;
 
     // Ability
-    this.prevAbilityText = this.abilityText;
-
     const firstAbility = pokeData.abilities.find(ability => !ability.is_hidden).ability.name;
-    this.abilityText = this.textCreator('Ability', firstAbility, yPos)
+
+    this.abilityText = this.textCreator('Ability', firstAbility, yPos);
+
     yPos += 20;
 
     // Moves
-    this.prevMovesText = this.movesText;
-
-    const moves = pokeData.moves.slice(0, 4).reduce((acc, item) => {
-      acc.push(item.move.name);
-      return acc;
-    }, [])
+    const moves = pokeData.moves
+      .slice(0, 4)
+      .reduce((acc, item) => {
+        acc.push(item.move.name);
+        return acc;
+      }, [])
 
     const movesLine1 = moves.slice(0, 2).join(', '),
       movesLine2 = moves.slice(2).join(', ');
@@ -84,21 +70,23 @@ export default class SelectedCharacter {
     yPos += 40; // increment by 20,  2 times as Moves takes 2 lines
 
     // Stats
-    this.prevStats = this.stats ? [...this.stats] : [];
     this.stats = []; // initialize stats array
+    
     pokeData.stats.map(item => {
       const statName = item.stat.name,
         statValue = item.base_stat;
+
       const statText = this.textCreator(this.capitalize(statName), statValue, yPos);
+
       this.stats.push(statText);
+
       yPos += 20;
     })
   }
 
   // presents the character image
   createCharacterImage(pokeData) {
-    this.prevImage = this.selectedImage;
-
+    
     const spriteWidth = 300,
       spriteHeight = 300;
 
@@ -108,7 +96,6 @@ export default class SelectedCharacter {
     pokeSprite.y = 280;
     pokeSprite.width = spriteWidth;
     pokeSprite.height = spriteHeight;
-
 
     this.selectedImage = pokeSprite;
   }
@@ -126,6 +113,7 @@ export default class SelectedCharacter {
     });
 
     const textObj = new PIXI.Text(text, style);
+
     textObj.x = 500 - (BOX_WIDTH / 2) + 10;
     textObj.y = yPos;
 
@@ -154,21 +142,18 @@ export default class SelectedCharacter {
     this.createCharacterImage(pokeData);
     this.createCharacterStats(pokeData);
 
-  }
 
-  render() {
-    if (!this.selected) {
-      return;
-    }
-    this.stage.addChild(this.selectedBox);
-    this.stage.addChild(this.pokeName);
-    this.stage.addChild(this.selectedImage);
-    this.stage.addChild(this.abilityText);
-    this.stage.addChild(this.movesText);
+    this.delete();
+  
+    this.addChild(this.selectedBox);
+    this.addChild(this.pokeName);
+    this.addChild(this.selectedImage);
+    this.addChild(this.abilityText);
+    this.addChild(this.movesText);
+    
     this.stats.map(stat => {
-      this.stage.addChild(stat);
+      this.addChild(stat);
     })
-    //this.stage.addChild(this.buttonSprite);
 
   }
 
@@ -176,14 +161,8 @@ export default class SelectedCharacter {
     if (!this.prev) {
       return;
     }
-    this.stage.removeChild(this.prevBox);
-    this.stage.removeChild(this.prevName);
-    this.stage.removeChild(this.prevImage);
-    this.stage.removeChild(this.prevAbilityText);
-    this.stage.removeChild(this.prevMovesText);
-    this.prevStats.map(stat => {
-      this.stage.removeChild(stat);
-    })
-
+    for(let i = this.children.length - 1; i >= 0; i --){
+      this.removeChild(this.children[i]);
+    }
   }
 }

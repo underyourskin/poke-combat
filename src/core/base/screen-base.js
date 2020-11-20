@@ -1,7 +1,8 @@
-export default class ScreenBase {
-  constructor( app ) {
-    this.renderer = app.renderer;
-    this.stage = app.stage;;
+import * as PIXI from 'pixi.js'
+
+export default class ScreenBase extends PIXI.Container {
+  constructor(  ) {
+    super()
   }
   
   getId() {
@@ -16,13 +17,6 @@ export default class ScreenBase {
    return 'bounce-out-fwd';
   }
 
-  render() {
-    throw new Error( 'render() is required.' );
-  }
-
   async onScreenChange( args = {} ) {};
 
-  destroy() {
-    this.stage.removeChildren();
-  }
 }

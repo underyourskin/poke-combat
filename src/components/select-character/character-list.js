@@ -1,21 +1,24 @@
 import * as PIXI from 'pixi.js'
 import { GlowFilter } from 'pixi-filters';
-import { pokeTypes } from '../data/poke-types';
+import { pokeTypes } from '../../data/poke-types';
 
 const ROW_SIZE = 10;
 const BOX_WIDTH = 100;
 const BOX_HEIGHT = 100;
 
-export default class CharacterList {
-  constructor(stage, pokemons, selectedCharacter) {
-    this.stage = stage;
-    this.pokemons = pokemons;
-    this.selectedCharacter = selectedCharacter;
+export default class CharacterList extends PIXI.Container{
+  constructor( pokemons, handleSelectCharacter) {
+    super()
+    this.width = 1000;
+    this.height = 200;
 
-    this.initialize();
+    this.pokemons = pokemons;
+    this.onSelect = handleSelectCharacter; 
+
+    this.init();
   }
 
-  initialize() {
+  init() {
     this.outlineFilterWhite = new GlowFilter(15, 2, 1, 0xff9999, 0.5);
 
     this.pokeSprites = [];
@@ -34,7 +37,6 @@ export default class CharacterList {
       const boxColor = pokeTypes[item.types[0].type.name]; // take only the first pokemon type
 
       // Character box 
-      // Draws dynamically character box with configuration for 10 boxes in a row
       const graphics = new PIXI.Graphics();
 
       graphics
@@ -42,7 +44,6 @@ export default class CharacterList {
         .beginFill(boxColor, 0.25) 
         .drawRoundedRect(xPos, yPos, BOX_WIDTH - 1.5 , BOX_HEIGHT, 2)
         .endFill();
-
 
       // Character Image
       const pokeSprite = new PIXI.Sprite.from(item.sprites.front_default);
@@ -63,6 +64,11 @@ export default class CharacterList {
       this.pokeContainers.push(graphics);
       this.pokeSprites.push(pokeSprite);
     })
+    
+    this.pokeContainers.forEach(container => this.addChild(container));
+    
+    this.pokeSprites.forEach(pokeSprite => this.addChild(pokeSprite));
+    
   }
 
   // filters toggle onClick
@@ -75,28 +81,26 @@ export default class CharacterList {
   }
 
   handleSpriteClick(pokeSprite) {
-    this.selectedCharacter.select(pokeSprite);
-    this.selectedCharacter.delete();
-    this.selectedCharacter.render();
+    this.onSelect(pokeSprite);
   }
 
   // Calculation for character box x position
   calculateX(index) {
+
     while (index >= ROW_SIZE) { // row size is 10 
+      
       index -= ROW_SIZE;
+
     }
     return (index * BOX_WIDTH)
   }
 
   // Calculation for character box y position
   calculateY(index) {
-    const temp = Math.floor(index / ROW_SIZE); // index / 10 
-    return (temp * BOX_HEIGHT)
-  }
 
-  render() {
-    this.pokeContainers.forEach(container => this.stage.addChild(container));
-    this.pokeSprites.forEach(pokeSprite => this.stage.addChild(pokeSprite));
+    const temp = Math.floor(index / ROW_SIZE); //  - index / 10 
+
+    return (temp * BOX_HEIGHT)
   }
 
 }

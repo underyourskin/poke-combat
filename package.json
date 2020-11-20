@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/underyourskin/poke-combat#readme",
   "dependencies": {
+    "gsap": "^3.5.1",
     "pixi-filters": "^3.1.1",
     "pixi.js": "^5.3.3"
   },

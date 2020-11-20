@@ -4,30 +4,30 @@ import ScreenManager from './core/screen-manager';
 import BattleScreen from './screens/battle-screen';
 import SelectCharacterScreen from './screens/select-character-screen.js';
 
-class App {
+class App extends PIXI.Application{
   constructor() {
-    window.onload = () => this.start();
+    super( { width: 1000, height: 1000} )
+    window.onload = () => this.init();
   }
   
-  async start() {
-    const app = new PIXI.Application({
-      width: 1000,
-      height: 1000,
-    });
+  async init() {
+    console.log(this.view)
     
-    document.body.appendChild(app.view);
+    const appContainer = new PIXI.Container();
 
-    const screenManager = new ScreenManager(app);
-    const pokemons = await Api.getPokemons();
+    this.renderer.backgroundColor = 0xAAAAAA;
 
-    const selectCharacterScreen = new SelectCharacterScreen( app, pokemons );
-    const battleScreen = new BattleScreen( app );
+    document.body.appendChild(this.view);
 
-    screenManager.addScreen( selectCharacterScreen );
-    screenManager.addScreen( battleScreen );
+    const screenManager = new ScreenManager(appContainer);
+    
+    await screenManager.init();
 
-    screenManager.navigateTo( selectCharacterScreen.getId() );
+    this.stage.addChild(appContainer);
+
+    this.start();
   }
 }
+
 
 new App();

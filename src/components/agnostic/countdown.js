@@ -8,22 +8,17 @@ const STYLE = {
 };
 
 export default class Countdown {
-  constructor(props = {
-    start: 5,
-    end: 1,
-    timeout: 1000,
-    x: 500,
-    y: 480
-  }) {
+  constructor(props) {
+    
     if (!props.stage) {
-      throw new Error('Stage is required prop');
+      throw new Error('Stage is required prop example : props = { start: 5, end: 1, timeout: 1000, x: 500, y: 480, }');
     }
     this.props = props;
   }
 
   countdown(count) {
     return new Promise(async (resolve) => {
-  
+
       const style = new PIXI.TextStyle(STYLE);
 
       const textObj = new PIXI.Text(` ${count} `, style);
@@ -46,7 +41,6 @@ export default class Countdown {
       }, timeout)
     });
   }
-
 
   async render() {
     for (let i = this.props.start; i >= this.props.end; i--) {
