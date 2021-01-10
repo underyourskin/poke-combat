@@ -13,7 +13,6 @@ export default class AnimationManager {
       params: animation.params,
       callback: animation.callback
     });
-   
   }
 
   async next(){

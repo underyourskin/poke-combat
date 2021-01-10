@@ -1,20 +1,17 @@
-import AnimationManager from "../animations/animation-manager";
-import Animations from "../animations/animations";
+import BattleAnimations from "../animations/BattleAnimations";
+import gsap from 'gsap';
 
 export default class BattleManager {
   constructor(playerA, playerB, players) {
     this.playerA = playerA;
     this.playerB = playerB;
     this.players = players;
-
-
   }
-  
-  async start(handleSwitch){
 
-    const animationManager = new AnimationManager();
+  async start(handleSwitch) {
 
-    const animations = new Animations();
+    const timeline = gsap.timeline({onComplete: () => handleSwitch()});
+    const animations = new BattleAnimations();
 
     const aStats = this.players.playerA.stats;
     const bStats = this.players.playerB.stats;
@@ -25,10 +22,10 @@ export default class BattleManager {
     let isAttackerA;
 
     // Move to function compare speed ?
-    if ( aSpeed < bSpeed ) {
+    if (aSpeed < bSpeed) {
       isAttackerA = false; // B starts
 
-    } else if ( aSpeed > bSpeed ) {
+    } else if (aSpeed > bSpeed) {
       isAttackerA = true; // A starts
 
     } else {
@@ -42,7 +39,7 @@ export default class BattleManager {
       aHealth = aTotalHealth,
       bHealth = bTotalHealth;
 
-    while ( aHealth > 0 && bHealth > 0 && misses < 6 ) {
+    while (aHealth > 0 && bHealth > 0 && misses < 6) {
 
       delay += 4000
 
@@ -55,31 +52,15 @@ export default class BattleManager {
           bHealth -= (actualDmg / 2);
           bHealth = bHealth > 0 ? bHealth : 0;
 
-          animationManager.addToQueue({
-            params: {
-              attacker: this.playerA,
-              opponent: this.playerB,
-              delay,
-              opponentHp: ((bHealth / bTotalHealth) * 100).toFixed(0)
-            },
-            callback: animations.bottomPlayerAttacks
-          });
+          timeline.add(animations.successfulAttack(this.playerA, this.playerB, -1));
+          timeline.add(animations.reduceHealth(this.playerB.children[1].children[1], bHealth));
 
           misses = 0;
 
         } else {
 
-          animationManager.addToQueue({
-            params: {
-              attacker: this.playerA,
-              opponent: this.playerB,
-              delay
-            },
-            callback: animations.bottomPlayerMisses
-          });
-
+          timeline.add(animations.missedAttack(this.playerA, this.playerB, -1))
           misses++
-
         }
 
         isAttackerA = false;
@@ -93,39 +74,25 @@ export default class BattleManager {
           aHealth -= (actualDmg / 2);
           aHealth = aHealth > 0 ? aHealth : 0;
 
-          animationManager.addToQueue({
-            params: {
-              attacker: this.playerB,
-              opponent: this.playerA,
-              delay,
-              opponentHp: ((aHealth / aTotalHealth) * 100).toFixed(0)
-            },
-            callback: animations.topPlayerAttacks
-          });
+          timeline.add(animations.successfulAttack(this.playerB, this.playerA, 1))
+          timeline.add(animations.reduceHealth(this.playerA.children[1].children[1], aHealth))
+          
 
           misses = 0;
 
         } else {
 
-          animationManager.addToQueue({
-            params: {
-              attacker: this.playerB,
-              opponent: this.playerA,
-              delay
-            },
-            callback: animations.topPlayerMisses
-          });
+          timeline.add(animations.missedAttack(this.playerB, this.playerA, 1))
 
           misses++
-
         }
 
         isAttackerA = true;
-
       }
     }
-   
-    await animationManager.start(handleSwitch.bind(this));
+
+    timeline.play();
+    
 
   }
 

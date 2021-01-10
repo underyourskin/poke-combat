@@ -1,8 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Player from '../components/battle/player';
 import ScreenBase from "../core/base/screen-base";
-import Animations from '../animations/animations'
-import AnimationManager from '../animations/animation-manager';
 import BattleManager from '../core/battle-manager';
 
 export default class BattleScreen extends ScreenBase {
